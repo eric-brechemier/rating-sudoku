@@ -15,9 +15,61 @@
       </head>
       <body>
         <h1>Sudoku Rating</h1>
+        <xsl:call-template name="legend" />
         <xsl:call-template name="grid" />
       </body>
     </html>
+  </xsl:template>
+
+  <!--
+  Background color scheme generated with: http://colorbrewer2.org/
+  "3-class Blues" (3 data classes, sequential data, single hue: blue)
+  The level0 uses color white; it is configured as background color
+  in the color scheme tool by default, which ensures sufficient contrast.
+  -->
+  <xsl:variable name="level0BackgroundColor">white</xsl:variable>
+  <xsl:variable name="level1BackgroundColor">#deebf7</xsl:variable>
+  <xsl:variable name="level2BackgroundColor">#9ecae1</xsl:variable>
+  <xsl:variable name="level3BackgroundColor">#3182bd</xsl:variable>
+
+  <xsl:variable name="level0Class">level0-given</xsl:variable>
+  <xsl:variable name="level1Class">level1-scanning</xsl:variable>
+  <xsl:variable name="level2Class">level2-marking-up</xsl:variable>
+  <xsl:variable name="level3Class">level3-pattern-matching</xsl:variable>
+
+  <xsl:variable name="level0Text">Given</xsl:variable>
+  <xsl:variable name="level1Text">Easy: Scanning (Naked Singles)</xsl:variable>
+  <xsl:variable name="level2Text">Medium: Marking Up (Hidden Singles)</xsl:variable>
+  <xsl:variable name="level3Text">Hard: Pattern Matching (Exclusion Classes)</xsl:variable>
+
+  <xsl:template name="legend">
+    <ul class="legend">
+      <xsl:call-template name="legendItem">
+        <xsl:with-param name="class" select="$level0Class" />
+        <xsl:with-param name="text" select="$level0Text" />
+      </xsl:call-template>
+      <xsl:call-template name="legendItem">
+        <xsl:with-param name="class" select="$level1Class" />
+        <xsl:with-param name="text" select="$level1Text" />
+      </xsl:call-template>
+      <xsl:call-template name="legendItem">
+        <xsl:with-param name="class" select="$level2Class" />
+        <xsl:with-param name="text" select="$level2Text" />
+      </xsl:call-template>
+      <xsl:call-template name="legendItem">
+        <xsl:with-param name="class" select="$level3Class" />
+        <xsl:with-param name="text" select="$level3Text" />
+      </xsl:call-template>
+    </ul>
+  </xsl:template>
+
+  <xsl:template name="legendItem">
+    <xsl:param name="class" />
+    <xsl:param name="text" />
+    <li>
+      <div class="legend-color {$class}"></div>
+      <xsl:value-of select="$text" />
+    </li>
   </xsl:template>
 
   <xsl:template name="rating-styles">
@@ -38,26 +90,36 @@ td {
   font-family: sans-serif;
 }
 td.level0-given {
-  background-color: white;
+  background-color: <xsl:value-of select="$level0BackgroundColor" />;
   color: black;
   font-weight: 900;
 }
 
 /* Difficulty Rating */
-/*
-  Background color scheme generated with: http://colorbrewer2.org/
-  "3-class Blues" (3 data classes, sequential data, single hue: blue)
-  The level0 uses color white; it is configured as background color
-  in the color scheme tool by default, which ensures sufficient contrast.
-*/
 .level1-scanning {
-  background-color: #deebf7;
+  background-color: <xsl:value-of select="$level1BackgroundColor" />;
 }
 .level2-marking-up {
-  background-color: #9ecae1;
+  background-color: <xsl:value-of select="$level2BackgroundColor" />;
 }
 .level3-pattern-matching {
-  background-color: #3182bd;
+  background-color: <xsl:value-of select="$level3BackgroundColor" />;
+}
+
+/* Legend */
+.legend {
+  float: right;
+  margin-right: 2em;
+  list-style-type: none;
+}
+.legend-color {
+  width: 1em;
+  height: 1em;
+  border: 1px solid black;
+  display: inline-block;
+  margin-right: 0.5em;
+  vertical-align: text-top;
+  margin-bottom: 0.5em;
 }
 </style>
   </xsl:template>
