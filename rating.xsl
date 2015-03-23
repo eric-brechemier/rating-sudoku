@@ -22,7 +22,43 @@
 
   <xsl:template name="rating-styles">
 <style>
+/* Sudoku table styles from: http://stackoverflow.com/a/3841203 */
+table { border: 3px solid black; }
+td { width:60px; height:60px; border:1px solid black; }
+td:nth-child(3n) { border-right-width:3px; }
+tr:nth-child(3n) td { border-bottom-width:3px; }
 
+/* Enhancements to sudoku table styles */
+table { border-collapse: collapse; }
+td { text-align: center; }
+
+/* Contrast of given vs solution */
+td {
+  color: #333;
+  font-family: sans-serif;
+}
+td.level0-given {
+  background-color: white;
+  color: black;
+  font-weight: 900;
+}
+
+/* Difficulty Rating */
+/*
+  Background color scheme generated with: http://colorbrewer2.org/
+  "3-class Blues" (3 data classes, sequential data, single hue: blue)
+  The level0 uses color white; it is configured as background color
+  in the color scheme tool by default, which ensures sufficient contrast.
+*/
+.level1-scanning {
+  background-color: #deebf7;
+}
+.level2-marking-up {
+  background-color: #9ecae1;
+}
+.level3-pattern-matching {
+  background-color: #3182bd;
+}
 </style>
   </xsl:template>
 
@@ -133,7 +169,17 @@
   </xsl:template>
 
   <xsl:template mode="cell" match="sudoku:square">
-    <td class="col{@col} row{@row} step{@step} {@method}">
+    <xsl:variable name="step">
+      <xsl:choose>
+        <xsl:when test="@step">
+          <xsl:value-of select="@step" />
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="0" />
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <td class="col{@col} row{@row} step{$step} level{@method}">
       <xsl:value-of select="@value" />
     </td>
   </xsl:template>
