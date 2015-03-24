@@ -31,16 +31,22 @@
   <xsl:variable name="level1BackgroundColor">#deebf7</xsl:variable>
   <xsl:variable name="level2BackgroundColor">#9ecae1</xsl:variable>
   <xsl:variable name="level3BackgroundColor">#3182bd</xsl:variable>
+  <!--
+  The color for the extra level 'Not Found' is the last color from the
+  color scheme 4-class Reds, also from http://colorbrewer2.org/ -->
+  <xsl:variable name="level404BackgroundColor">#cb181d</xsl:variable>
 
   <xsl:variable name="level0Class">level0-given</xsl:variable>
   <xsl:variable name="level1Class">level1-scanning</xsl:variable>
   <xsl:variable name="level2Class">level2-marking-up</xsl:variable>
   <xsl:variable name="level3Class">level3-pattern-matching</xsl:variable>
+  <xsl:variable name="level404Class">level404-not-found</xsl:variable>
 
   <xsl:variable name="level0Text">Given</xsl:variable>
   <xsl:variable name="level1Text">Easy: Scanning (Naked Singles)</xsl:variable>
   <xsl:variable name="level2Text">Medium: Marking Up (Hidden Singles)</xsl:variable>
   <xsl:variable name="level3Text">Hard: Pattern Matching (Exclusion Classes)</xsl:variable>
+  <xsl:variable name="level404Text">Problematic: Not Found (New Strategy Needed)</xsl:variable>
 
   <xsl:template name="legend">
     <ul class="legend">
@@ -59,6 +65,10 @@
       <xsl:call-template name="legendItem">
         <xsl:with-param name="class" select="$level3Class" />
         <xsl:with-param name="text" select="$level3Text" />
+      </xsl:call-template>
+      <xsl:call-template name="legendItem">
+        <xsl:with-param name="class" select="$level404Class" />
+        <xsl:with-param name="text" select="$level404Text" />
       </xsl:call-template>
     </ul>
   </xsl:template>
@@ -89,21 +99,24 @@ td {
   color: #333;
   font-family: sans-serif;
 }
-td.level0-given {
+td.<xsl:value-of select="$level0Class" /> {
   background-color: <xsl:value-of select="$level0BackgroundColor" />;
   color: black;
   font-weight: 900;
 }
 
 /* Difficulty Rating */
-.level1-scanning {
+.<xsl:value-of select="$level1Class" /> {
   background-color: <xsl:value-of select="$level1BackgroundColor" />;
 }
-.level2-marking-up {
+.<xsl:value-of select="$level2Class" /> {
   background-color: <xsl:value-of select="$level2BackgroundColor" />;
 }
-.level3-pattern-matching {
+.<xsl:value-of select="$level3Class" /> {
   background-color: <xsl:value-of select="$level3BackgroundColor" />;
+}
+.<xsl:value-of select="$level404Class" /> {
+  background-color: <xsl:value-of select="$level404BackgroundColor" />;
 }
 
 /* Legend */
@@ -241,7 +254,17 @@ td.level0-given {
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <td class="col{@col} row{@row} step{$step} level{@method}">
+    <xsl:variable name="level">
+      <xsl:choose>
+        <xsl:when test="@method">
+          <xsl:value-of select="concat('level',@method)" />
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$level404Class" />
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <td class="col{@col} row{@row} step{$step} {$level}">
       <xsl:value-of select="@value" />
     </td>
   </xsl:template>
