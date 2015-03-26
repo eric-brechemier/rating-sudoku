@@ -1,0 +1,3 @@
+[submodule "sub/solving-sudoku"]
+	path = sub/solving-sudoku
+	url = git@github.com:eric-brechemier/solving-sudoku.git
