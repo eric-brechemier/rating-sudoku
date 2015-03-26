@@ -320,8 +320,11 @@ td.<xsl:value-of select="$level0Class" /> {
           <xsl:value-of select="$symbol" />
         </xsl:when>
         <xsl:when test="sudoku:forbidden/sudoku:symbol[. = $symbol]">
-          <xsl:text>x</xsl:text>
+          <xsl:text>X</xsl:text>
         </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>x</xsl:text>
+        </xsl:otherwise>
       </xsl:choose>
     </td>
   </xsl:template>
