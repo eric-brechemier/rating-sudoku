@@ -92,7 +92,20 @@ tr:nth-child(3n) td { border-bottom-width:3px; }
 
 /* Enhancements to sudoku table styles */
 table { border-collapse: collapse; }
-td { text-align: center; }
+td { text-align: center; padding: 0; }
+
+/* Leftover clues displayed in unsolved puzzles */
+table table {
+  border: none;
+  margin: 0;
+}
+table table td {
+  width: 20px;
+  height: 20px;
+  border: none;
+  color: white;
+  font-size: small;
+}
 
 /* Contrast of given vs solution */
 td {
@@ -243,7 +256,7 @@ td.<xsl:value-of select="$level0Class" /> {
     </table>
   </xsl:template>
 
-  <xsl:template mode="cell" match="sudoku:square">
+  <xsl:template mode="cell" match="sudoku:square[@value]">
     <xsl:variable name="step">
       <xsl:choose>
         <xsl:when test="@step">
@@ -254,18 +267,62 @@ td.<xsl:value-of select="$level0Class" /> {
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="level">
-      <xsl:choose>
-        <xsl:when test="@method">
-          <xsl:value-of select="concat('level',@method)" />
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="$level404Class" />
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <td class="col{@col} row{@row} step{$step} {$level}">
+    <td class="col{@col} row{@row} step{$step} level{@method}">
       <xsl:value-of select="@value" />
+    </td>
+  </xsl:template>
+
+  <xsl:template mode="cell" match="sudoku:square[not(@value)]">
+    <td class="col{@col} row{@row} {$level404Class}">
+      <table>
+        <tr>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="1" />
+          </xsl:apply-templates>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="2" />
+          </xsl:apply-templates>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="3" />
+          </xsl:apply-templates>
+        </tr>
+        <tr>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="4" />
+          </xsl:apply-templates>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="5" />
+          </xsl:apply-templates>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="6" />
+          </xsl:apply-templates>
+        </tr>
+        <tr>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="7" />
+          </xsl:apply-templates>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="8" />
+          </xsl:apply-templates>
+          <xsl:apply-templates mode="clue" select=".">
+            <xsl:with-param name="symbol" select="9" />
+          </xsl:apply-templates>
+        </tr>
+      </table>
+    </td>
+  </xsl:template>
+
+  <xsl:template mode="clue" match="sudoku:square">
+    <xsl:param name="symbol" />
+    <td>
+      <xsl:choose>
+        <xsl:when test="sudoku:allowed/sudoku:symbol[. = $symbol]">
+          <xsl:value-of select="$symbol" />
+        </xsl:when>
+        <xsl:when test="sudoku:forbidden/sudoku:symbol[. = $symbol]">
+          <xsl:text>x</xsl:text>
+        </xsl:when>
+      </xsl:choose>
     </td>
   </xsl:template>
 
